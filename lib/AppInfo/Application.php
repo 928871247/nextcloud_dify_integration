@@ -65,7 +65,8 @@ class Application extends App implements IBootstrap {
         // 注册设置面板
         $context->registerService(ISettings::class, function($c) {
             return new \OCA\NextcloudDifyIntegration\Settings\Admin(
-                $c->query(ConfigService::class)
+                $c->query(ConfigService::class),
+                $c->query(\OCP\IL10N::class)
             );
         });
         

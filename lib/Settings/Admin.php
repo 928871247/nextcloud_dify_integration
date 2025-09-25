@@ -5,14 +5,17 @@ namespace OCA\NextcloudDifyIntegration\Settings;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\ISettings;
 use OCA\NextcloudDifyIntegration\Service\ConfigService;
+use OCP\IL10N;
 
 class Admin implements ISettings {
     
     private $configService;
+    private $l;
     
     // 构造函数保持不变（DI 会注入 ConfigService）
-    public function __construct(ConfigService $configService) {
+    public function __construct(ConfigService $configService, IL10N $l) {
         $this->configService = $configService;
+        $this->l = $l;
     }
     
     // getForm() 和其他方法不变
@@ -26,7 +29,8 @@ class Admin implements ISettings {
             'difyUrl' => $difyUrl,
             'difyApiKey' => $difyApiKey,
             'directoryMappings' => $directoryMappings,
-            'namingPattern' => $namingPattern
+            'namingPattern' => $namingPattern,
+            'l' => $this->l
         ];
         
         return new TemplateResponse(

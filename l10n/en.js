@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "nextcloud_dify_integration",
+    {
+    "Knowledge Base" : "Knowledge Base",
+    "Dify Knowledge Base Integration" : "Dify Knowledge Base Integration",
+    "This plugin integrates Nextcloud with Dify knowledge base, automatically synchronizing files from specified directories in Nextcloud to the Dify knowledge base." : "This plugin integrates Nextcloud with Dify knowledge base, automatically synchronizing files from specified directories in Nextcloud to the Dify knowledge base.",
+    "Dify URL" : "Dify URL",
+    "e.g.: https://dify.example.com/v1" : "e.g.: https://dify.example.com/v1",
+    "Dify API Key" : "Dify API Key",
+    "Please enter Dify API Key" : "Please enter Dify API Key",
+    "Document Naming Pattern" : "Document Naming Pattern",
+    "Select the naming pattern for documents in Dify" : "Select the naming pattern for documents in Dify",
+    "📄file 📁directory 📅modifiedDate modifiedTime.md (Recommended)" : "📄file 📁directory 📅modifiedDate modifiedTime.md (Recommended)",
+    "📁directory 📄file 📅modifiedDate modifiedTime.md" : "📁directory 📄file 📅modifiedDate modifiedTime.md",
+    "file (directory) modifiedDate modifiedTime.md" : "file (directory) modifiedDate modifiedTime.md",
+    " (directory) file modifiedDate modifiedTime.md" : " (directory) file modifiedDate modifiedTime.md",
+    "Directory Mapping" : "Directory Mapping",
+    "Please enter the path relative to the Nextcloud root directory, e.g.: /test represents the test folder under the root directory" : "Please enter the path relative to the Nextcloud root directory, e.g.: /test represents the test folder under the root directory",
+    "Nextcloud Directory Path" : "Nextcloud Directory Path",
+    "Dify Knowledge Base ID" : "Dify Knowledge Base ID",
+    "Delete" : "Delete",
+    "Add Mapping" : "Add Mapping",
+    "Save" : "Save",
+    "Configuration saved" : "Configuration saved",
+    "Save failed" : "Save failed"
+},
+"nplurals=2; plural=(n != 1);");

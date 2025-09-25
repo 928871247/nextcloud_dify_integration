@@ -92,7 +92,7 @@ class APIController extends OCSController {
             }
             
             // 获取命名模式
-            $namingPattern = $this->request->getParam('naming_pattern', 'improved');
+            $namingPattern = $this->request->getParam('naming_pattern', 'pattern1');
             
             // 保存
             $this->configService->setDifyUrl($difyUrl);

@@ -1,0 +1,27 @@
+{
+  "translations": {
+    "Knowledge Base": "知识库",
+    "Dify Knowledge Base Integration": "Dify 知识库集成",
+    "This plugin integrates Nextcloud with Dify knowledge base, automatically synchronizing files from specified directories in Nextcloud to the Dify knowledge base.": "这是一个将 Nextcloud 与 Dify 知识库集成的插件，可以自动将 Nextcloud 中指定目录的文件同步到 Dify 知识库中。",
+    "Dify URL": "Dify 地址",
+    "e.g.: https://dify.example.com/v1": "例如: https://dify.example.com/v1",
+    "Dify API Key": "Dify API Key",
+    "Please enter Dify API Key": "请输入 Dify API Key",
+    "Document Naming Pattern": "文档命名模式",
+    "Select the naming pattern for documents in Dify": "选择Dify中文档的命名方式",
+    "📄file 📁directory 📅modifiedDate modifiedTime.md (Recommended)": "📄file 📁directory 📅modifiedDate modifiedTime.md (推荐)",
+    "📁directory 📄file 📅modifiedDate modifiedTime.md": "📁directory 📄file 📅modifiedDate modifiedTime.md",
+    "file (directory) modifiedDate modifiedTime.md": "file (directory) modifiedDate modifiedTime.md",
+    " (directory) file modifiedDate modifiedTime.md": " (directory) file modifiedDate modifiedTime.md",
+    "Directory Mapping": "目录映射关系",
+    "Please enter the path relative to the Nextcloud root directory, e.g.: /test represents the test folder under the root directory": "请输入相对于 Nextcloud 根目录的路径，例如：/test 表示根目录下的 test 文件夹",
+    "Nextcloud Directory Path": "Nextcloud 目录路径",
+    "Dify Knowledge Base ID": "Dify 知识库 ID",
+    "Delete": "删除",
+    "Add Mapping": "添加映射",
+    "Save": "保存",
+    "Configuration saved": "配置已保存",
+    "Save failed": "保存失败"
+  },
+  "pluralForm": "nplurals=1; plural=0;"
+}

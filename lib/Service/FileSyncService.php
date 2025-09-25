@@ -56,7 +56,7 @@ class FileSyncService {
                 $this->logger->debug('FileSyncService: 找到映射关系: ' . json_encode($mapping), ['app' => 'nextcloud_dify_integration']);
                 
                 // 记录准备上传的文件信息
-                $this->logger->info('FileSyncService: 准备上传文件到Dify', [
+                $this->logger->info('FileSyncService: 准备异步上传文件到Dify', [
                     'fileName' => $fileName,
                     'filePath' => $filePath,
                     'kbId' => $mapping['dify_kb_id'],
@@ -64,8 +64,8 @@ class FileSyncService {
                     'app' => 'nextcloud_dify_integration'
                 ]);
                 
-                // 直接上传文件到 Dify 知识库
-                $this->difyService->uploadDocumentFromFile($node);
+                // 异步处理文件上传
+                $this->processFileOperationAsync('create', $node);
             } else {
                 $this->logger->debug('FileSyncService: 未找到映射关系，跳过创建处理', ['app' => 'nextcloud_dify_integration']);
                 $this->logger->debug('FileSyncService: 当前配置的映射关系: ' . json_encode($this->configService->getDirectoryMappings()), ['app' => 'nextcloud_dify_integration']);
@@ -145,8 +145,8 @@ class FileSyncService {
                     $this->logger->debug('FileSyncService: 未找到旧文档', ['app' => 'nextcloud_dify_integration']);
                 }
                 
-                // 然后上传新文档（使用新的修改时间）
-                $this->difyService->uploadDocumentFromFile($node);
+                // 然后异步上传新文档（使用新的修改时间）
+                $this->processFileOperationAsync('update', $node);
             } else {
                 $this->logger->debug('FileSyncService: 未找到映射关系，跳过更新处理', ['app' => 'nextcloud_dify_integration']);
                 $this->logger->debug('FileSyncService: 当前配置的映射关系: ' . json_encode($this->configService->getDirectoryMappings()), ['app' => 'nextcloud_dify_integration']);
@@ -230,18 +230,13 @@ class FileSyncService {
             if ($mapping) {
                 $this->logger->debug('FileSyncService: 找到映射关系: ' . json_encode($mapping), ['app' => 'nextcloud_dify_integration']);
                 
-                // 获取文件名
+                // 获取文件名和修改时间
                 $fileName = $node->getName();
+                $modificationTime = $node->getMTime();
                 $this->logger->debug('FileSyncService: 文件名: ' . $fileName, ['app' => 'nextcloud_dify_integration']);
                 
-                // 删除 Dify 知识库中的文件
-                $modificationTime = $node->getMTime(); // 获取文件修改时间
-                $this->difyService->deleteDocumentByIdentifier(
-                    $mapping['dify_kb_id'],
-                    $filePath,
-                    $fileName,
-                    $modificationTime
-                );
+                // 异步删除 Dify 知识库中的文件
+                $this->processFileOperationAsync('delete', $node, $mapping['dify_kb_id'], $modificationTime);
             } else {
                 $this->logger->debug('FileSyncService: 未找到映射关系，跳过删除处理', ['app' => 'nextcloud_dify_integration']);
                 $this->logger->debug('FileSyncService: 当前配置的映射关系: ' . json_encode($this->configService->getDirectoryMappings()), ['app' => 'nextcloud_dify_integration']);
@@ -249,6 +244,145 @@ class FileSyncService {
         } catch (\Exception $e) {
             $this->logger->error('FileSyncService: 处理文件删除事件时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
             $this->logger->error('FileSyncService: 错误堆栈: ' . $e->getTraceAsString(), ['app' => 'nextcloud_dify_integration']);
+        }
+    }
+    
+    /**
+     * 异步处理文件操作
+     */
+    private function processFileOperationAsync(string $operation, Node $node, string $kbId = null, int $modificationTime = null): void {
+        try {
+            // 获取文件信息
+            $filePath = $node->getPath();
+            $fileName = $node->getName();
+            
+            // 检查是否启用异步处理
+            $asyncProcessing = $this->configService->getAsyncProcessing();
+            
+            if ($asyncProcessing) {
+                // 记录异步处理任务
+                $this->logger->info('FileSyncService: 添加异步任务到队列', [
+                    'operation' => $operation,
+                    'fileName' => $fileName,
+                    'filePath' => $filePath,
+                    'kbId' => $kbId,
+                    'app' => 'nextcloud_dify_integration'
+                ]);
+                
+                // 使用简单的延迟处理来模拟异步处理
+                $processingDelay = $this->configService->getProcessingDelay();
+                if ($processingDelay > 0) {
+                    sleep($processingDelay);
+                }
+                
+                // 执行文件操作
+                $this->executeFileOperation($operation, $node, $kbId, $modificationTime);
+            } else {
+                // 同步处理
+                $this->logger->info('FileSyncService: 同步处理文件操作', [
+                    'operation' => $operation,
+                    'fileName' => $fileName,
+                    'filePath' => $filePath,
+                    'app' => 'nextcloud_dify_integration'
+                ]);
+                
+                // 直接执行文件操作
+                $this->executeFileOperation($operation, $node, $kbId, $modificationTime);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('FileSyncService: 添加异步任务时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
+        }
+    }
+    
+    /**
+     * 执行文件操作
+     */
+    private function executeFileOperation(string $operation, Node $node, string $kbId = null, int $modificationTime = null): void {
+        try {
+            switch ($operation) {
+                case 'create':
+                    $this->difyService->uploadDocumentFromFile($node);
+                    break;
+                case 'update':
+                    // 重新实现更新逻辑
+                    $this->handleFileUpdateInternal($node);
+                    break;
+                case 'delete':
+                    if ($kbId) {
+                        // 查找并删除文档
+                        $filePath = $node->getPath();
+                        $fileName = $node->getName();
+                        $this->difyService->deleteDocumentByIdentifier($kbId, $filePath, $fileName, $modificationTime);
+                    }
+                    break;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('FileSyncService: 执行文件操作时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
+        }
+    }
+    
+    /**
+     * 内部文件更新处理逻辑
+     */
+    private function handleFileUpdateInternal(Node $node): void {
+        try {
+            // 获取文件路径
+            $filePath = $node->getPath();
+            
+            // 根据目录映射关系找到对应的 Dify 知识库 ID
+            $mapping = $this->configService->getMappingByPath($filePath);
+            if ($mapping) {
+                // 获取文件名
+                $fileName = $node->getName();
+                
+                // 获取当前文件的修改时间
+                $currentModificationTime = $node->getMTime();
+                
+                // 查找旧文档（通过列出所有文档并匹配文件名）
+                $oldDocument = null;
+                try {
+                    $documentsResponse = $this->difyService->listDocuments($mapping['dify_kb_id']);
+                    $this->logger->debug('FileSyncService: 查找文档结果: ' . json_encode($documentsResponse), ['app' => 'nextcloud_dify_integration']);
+                    
+                    // 查找匹配的文档（通过文件名匹配）
+                    if (isset($documentsResponse['data']) && is_array($documentsResponse['data'])) {
+                        foreach ($documentsResponse['data'] as $document) {
+                            if (isset($document['name']) && $this->isSameFile($document['name'], $filePath, $fileName)) {
+                                $oldDocument = $document;
+                                break;
+                            }
+                        }
+                    } elseif (isset($documentsResponse['documents']) && is_array($documentsResponse['documents'])) {
+                        foreach ($documentsResponse['documents'] as $document) {
+                            if (isset($document['name']) && $this->isSameFile($document['name'], $filePath, $fileName)) {
+                                $oldDocument = $document;
+                                break;
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->warning('FileSyncService: 查找旧文档时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
+                }
+                
+                if ($oldDocument) {
+                    $this->logger->debug('FileSyncService: 找到旧文档，ID: ' . $oldDocument['id'], ['app' => 'nextcloud_dify_integration']);
+                    // 如果找到了旧文档，先删除它
+                    try {
+                        // 直接通过文档ID删除旧文档
+                        $this->difyService->deleteDocumentById($mapping['dify_kb_id'], $oldDocument['id']);
+                        $this->logger->debug('FileSyncService: 成功删除旧文档', ['app' => 'nextcloud_dify_integration']);
+                    } catch (\Exception $e) {
+                        $this->logger->warning('FileSyncService: 删除旧文档时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
+                    }
+                } else {
+                    $this->logger->debug('FileSyncService: 未找到旧文档', ['app' => 'nextcloud_dify_integration']);
+                }
+                
+                // 上传新文档（使用新的修改时间）
+                $this->difyService->uploadDocumentFromFile($node);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('FileSyncService: 内部文件更新处理时出错: ' . $e->getMessage(), ['app' => 'nextcloud_dify_integration']);
         }
     }
     

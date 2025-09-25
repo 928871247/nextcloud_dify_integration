@@ -27,7 +27,7 @@ class AdminSection implements IIconSection {
      * 返回设置部分的名称
      */
     public function getName(): string {
-        return $this->l->t('知识库');
+        return $this->l->t('Knowledge Base');
     }
     
     /**

@@ -2,7 +2,7 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>nextcloud_dify_integration</id>
-    <name>Dify 知识库集成</name>
+    <name>Dify Integration</name>
     <summary>将 Nextcloud 文件同步到 Dify 知识库</summary>
     <description><![CDATA[此插件可以将 Nextcloud 中指定目录的文件自动同步到 Dify 知识库中，实现知识的集中管理。]]></description>
     <version>1.0.0</version>
@@ -21,6 +21,11 @@
         <php min-version="7.4" />
         <nextcloud min-version="27" max-version="32"/>
     </dependencies>
+    <!-- 多语言支持 -->
+    <l10n>
+        <language>en</language>
+        <language>zh_CN</language>
+    </l10n>
     <!-- 设置部分由 Application.php 中的代码注册 -->
     <settings>
         <admin>OCA\NextcloudDifyIntegration\Settings\Admin</admin>

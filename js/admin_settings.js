@@ -18,9 +18,9 @@
             const newRow = document.createElement('div');
             newRow.className = 'mapping-row';
             newRow.innerHTML = `
-                <input type="text" name="mappings[${nextIndex}][nextcloud_path]" placeholder="Nextcloud 目录路径" class="nextcloud-path">
-                <input type="text" name="mappings[${nextIndex}][dify_kb_id]" placeholder="Dify 知识库 ID" class="dify-kb-id">
-                <button type="button" class="remove-mapping">删除</button>
+                <input type="text" name="mappings[${nextIndex}][nextcloud_path]" placeholder="${t('nextcloud_dify_integration', 'Nextcloud Directory Path')}" class="nextcloud-path">
+                <input type="text" name="mappings[${nextIndex}][dify_kb_id]" placeholder="${t('nextcloud_dify_integration', 'Dify Knowledge Base ID')}" class="dify-kb-id">
+                <button type="button" class="remove-mapping">${t('nextcloud_dify_integration', 'Delete')}</button>
             `;
             mappingsContainer.appendChild(newRow);
             
@@ -94,11 +94,11 @@
                             newRow.innerHTML = `
                                 <input type="text" name="mappings[${index}][nextcloud_path]" 
                                        value="${mapping.nextcloud_path || ''}" 
-                                       placeholder="Nextcloud 目录路径" class="nextcloud-path">
+                                       placeholder="${t('nextcloud_dify_integration', 'Nextcloud Directory Path')}" class="nextcloud-path">
                                 <input type="text" name="mappings[${index}][dify_kb_id]" 
                                        value="${mapping.dify_kb_id || ''}" 
-                                       placeholder="Dify 知识库 ID" class="dify-kb-id">
-                                <button type="button" class="remove-mapping">删除</button>
+                                       placeholder="${t('nextcloud_dify_integration', 'Dify Knowledge Base ID')}" class="dify-kb-id">
+                                <button type="button" class="remove-mapping">${t('nextcloud_dify_integration', 'Delete')}</button>
                             `;
                             mappingsContainer.appendChild(newRow);
                             
@@ -114,9 +114,9 @@
                         const newRow = document.createElement('div');
                         newRow.className = 'mapping-row';
                         newRow.innerHTML = `
-                            <input type="text" name="mappings[0][nextcloud_path]" placeholder="Nextcloud 目录路径" class="nextcloud-path">
-                            <input type="text" name="mappings[0][dify_kb_id]" placeholder="Dify 知识库 ID" class="dify-kb-id">
-                            <button type="button" class="remove-mapping">删除</button>
+                            <input type="text" name="mappings[0][nextcloud_path]" placeholder="${t('nextcloud_dify_integration', 'Nextcloud Directory Path')}" class="nextcloud-path">
+                            <input type="text" name="mappings[0][dify_kb_id]" placeholder="${t('nextcloud_dify_integration', 'Dify Knowledge Base ID')}" class="dify-kb-id">
+                            <button type="button" class="remove-mapping">${t('nextcloud_dify_integration', 'Delete')}</button>
                         `;
                         mappingsContainer.appendChild(newRow);
                         
@@ -147,7 +147,7 @@
             // 提取基本配置
             const difyUrl = formData.get('dify_url') || '';
             const difyApiKey = formData.get('dify_api_key') || '';
-            const namingPattern = formData.get('naming_pattern') || 'improved';
+            const namingPattern = formData.get('naming_pattern') || 'pattern1';
             
             // 收集映射关系数据
             const mappings = [];
@@ -171,6 +171,7 @@
             requestBody.append('dify_url', difyUrl);
             requestBody.append('dify_api_key', difyApiKey);
             requestBody.append('naming_pattern', namingPattern);
+            
             requestBody.append('mappings', JSON.stringify(mappings));
             
             // 发送 AJAX 请求保存配置
@@ -186,9 +187,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.ocs && data.ocs.data && data.ocs.data.status === 'success') {
-                    OC.Notification.showTemporary('配置已保存');
+                    OC.Notification.showTemporary(t('nextcloud_dify_integration', 'Configuration saved'));
                 } else {
-                    let message = '保存失败';
+                    let message = t('nextcloud_dify_integration', 'Save failed');
                     if (data.ocs && data.ocs.data && data.ocs.data.message) {
                         message = data.ocs.data.message;
                     }
@@ -196,7 +197,7 @@
                 }
             })
             .catch(error => {
-                OC.Notification.showTemporary('保存失败: ' + error.message);
+                OC.Notification.showTemporary(t('nextcloud_dify_integration', 'Save failed') + ': ' + error.message);
             });
         });
     });
