@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>nextcloud_dify_integration</id>
+    <name>Dify 知识库集成</name>
+    <summary>将 Nextcloud 文件同步到 Dify 知识库</summary>
+    <description><![CDATA[此插件可以将 Nextcloud 中指定目录的文件自动同步到 Dify 知识库中，实现知识的集中管理。]]></description>
+    <version>1.0.0</version>
+    <licence>agpl</licence>
+    <author mail="developer@example.com" homepage="https://example.com">开发者姓名</author>
+    <namespace>NextcloudDifyIntegration</namespace>
+    <documentation>
+        <admin>https://github.com/your-name/nextcloud-dify-integration</admin>
+    </documentation>
+    <category>tools</category>
+    <website>https://github.com/your-name/nextcloud-dify-integration</website>
+    <bugs>https://github.com/your-name/nextcloud-dify-integration/issues</bugs>
+    <repository>https://github.com/your-name/nextcloud-dify-integration.git</repository>
+    <screenshot>https://github.com/your-name/nextcloud-dify-integration/raw/master/screenshots/main.png</screenshot>
+    <dependencies>
+        <php min-version="7.4" />
+        <nextcloud min-version="27" max-version="32"/>
+    </dependencies>
+    <!-- 设置部分由 Application.php 中的代码注册 -->
+    <settings>
+        <admin>OCA\NextcloudDifyIntegration\Settings\Admin</admin>
+        <admin-section>OCA\NextcloudDifyIntegration\Settings\AdminSection</admin-section>
+        <admin-script>admin_settings</admin-script>
+    </settings>
+</info>

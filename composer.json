@@ -1,0 +1,30 @@
+{
+    "name": "nextcloud-dify-integration/nextcloud-dify-integration",
+    "description": "Nextcloud app to integrate with Dify knowledge base",
+    "type": "project",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "开发者姓名",
+            "email": "developer@example.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "OCA\\NextcloudDifyIntegration\\": "lib/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-filename-validation": "php test_filename_validation.php",
+        "debug-dify-api": "php debug_dify_api.php",
+        "cs:check": "phpcs --standard=PSR12 lib/",
+        "cs:fix": "phpcbf --standard=PSR12 lib/"
+    }
+}
